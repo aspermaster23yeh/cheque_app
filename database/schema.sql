@@ -110,8 +110,8 @@ CREATE INDEX IF NOT EXISTS idx_detalles_venta_producto ON detalles_venta (produc
 -- PIN '1234' → reemplazar con hash real en producción.
 -- -----------------------------------------------------------------------------
 INSERT OR IGNORE INTO usuarios (id, nombre, rol, pin_acceso) VALUES
-    (1, 'Administrador', 'admin',    '1234'),
-    (2, 'Vendedor',      'vendedor', '1234');
+    (1, 'Administrador', 'admin',    '2323'),
+    (2, 'Vendedor',      'vendedor', '0423');
 
 INSERT OR IGNORE INTO categorias (id, nombre, orden) VALUES
     (1, 'Carnitas',  1),

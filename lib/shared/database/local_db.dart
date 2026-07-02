@@ -29,7 +29,7 @@ class LocalDatabase extends _$LocalDatabase {
   LocalDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -38,7 +38,9 @@ class LocalDatabase extends _$LocalDatabase {
           await _seedInitialData();
         },
         onUpgrade: (m, from, to) async {
-          // Futuras migraciones incrementales (Fase 2: sync con Supabase).
+          if (from < 2) {
+            await _actualizarPinesUsuarios();
+          }
         },
       );
 
@@ -68,7 +70,8 @@ class LocalDatabase extends _$LocalDatabase {
   /// Busca usuario por PIN (Fase 1: comparación directa; migrar a hash).
   Future<Usuario?> findUsuarioByPin(String pin) {
     return (select(usuarios)
-          ..where((u) => u.pinAcceso.equals(pin) & u.activo.equals(true)))
+          ..where((u) => u.pinAcceso.equals(pin) & u.activo.equals(true))
+          ..limit(1))
         .getSingleOrNull();
   }
 
@@ -220,12 +223,12 @@ class LocalDatabase extends _$LocalDatabase {
         UsuariosCompanion.insert(
           nombre: 'Administrador',
           rol: RolUsuario.admin,
-          pinAcceso: '1234',
+          pinAcceso: '2323',
         ),
         UsuariosCompanion.insert(
           nombre: 'Vendedor',
           rol: RolUsuario.vendedor,
-          pinAcceso: '1234',
+          pinAcceso: '0423',
         ),
       ]);
 
@@ -285,5 +288,13 @@ class LocalDatabase extends _$LocalDatabase {
         ),
       ]);
     });
+  }
+
+  /// Actualiza PINs en instalaciones existentes (migración v1 → v2).
+  Future<void> _actualizarPinesUsuarios() async {
+    await (update(usuarios)..where((u) => u.rol.equals(RolUsuario.admin.value)))
+        .write(const UsuariosCompanion(pinAcceso: Value('2323')));
+    await (update(usuarios)..where((u) => u.rol.equals(RolUsuario.vendedor.value)))
+        .write(const UsuariosCompanion(pinAcceso: Value('0423')));
   }
 }

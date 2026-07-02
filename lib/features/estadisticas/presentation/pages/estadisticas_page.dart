@@ -93,35 +93,33 @@ class _EstadisticasView extends StatelessWidget {
   }
 
   Widget _kpiGrid(KpiResumen resumen) {
-    return SizedBox(
-      height: 160,
-      child: Row(
-        children: [
-          Expanded(
-            child: KpiCard(
-              titulo: 'VENTAS HOY',
-              valor: MoneyFormatter.toDisplay(resumen.totalCentavos),
-              icono: Icons.payments_outlined,
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: KpiCard(
+            titulo: 'VENTAS HOY',
+            valor: MoneyFormatter.toDisplay(resumen.totalCentavos),
+            icono: Icons.payments_outlined,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: KpiCard(
-              titulo: 'ÓRDENES',
-              valor: '${resumen.cantidadVentas}',
-              icono: Icons.receipt_long_outlined,
-            ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: KpiCard(
+            titulo: 'ÓRDENES',
+            valor: '${resumen.cantidadVentas}',
+            icono: Icons.receipt_long_outlined,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: KpiCard(
-              titulo: 'TICKET PROM.',
-              valor: MoneyFormatter.toDisplay(resumen.ticketPromedioCentavos),
-              icono: Icons.trending_up_rounded,
-            ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: KpiCard(
+            titulo: 'TICKET PROM.',
+            valor: MoneyFormatter.toDisplay(resumen.ticketPromedioCentavos),
+            icono: Icons.trending_up_rounded,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

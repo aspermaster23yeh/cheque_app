@@ -9,6 +9,13 @@ class MoneyFormatter {
     return '\$$pesos.$cents';
   }
 
+  /// Convierte texto de precio a centavos: "280" → 28000, "70.50" → 7050
+  static int fromInput(String input) {
+    final cleaned = input.replaceAll(RegExp(r'[^\d.]'), '');
+    final value = double.tryParse(cleaned) ?? 0;
+    return (value * 100).round();
+  }
+
   /// Calcula subtotal en centavos para productos por peso.
   /// Usa redondeo bancario para evitar errores de punto flotante.
   static int calcularSubtotal({

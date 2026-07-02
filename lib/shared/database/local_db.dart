@@ -67,6 +67,41 @@ class LocalDatabase extends _$LocalDatabase {
         .watch();
   }
 
+  /// Todos los productos (activos e inactivos) para administración.
+  Stream<List<Producto>> watchTodosLosProductos() {
+    return (select(productos)
+          ..orderBy([
+            (p) => OrderingTerm.asc(p.categoriaId),
+            (p) => OrderingTerm.asc(p.nombre),
+          ]))
+        .watch();
+  }
+
+  /// Actualiza un producto desde el panel de inventario admin.
+  Future<void> actualizarProducto({
+    required int id,
+    required String nombre,
+    required int categoriaId,
+    required int precioUnidadCentavos,
+    required double inventarioDisponible,
+    required bool esPorPeso,
+    required bool activo,
+    String? imagenUrl,
+  }) async {
+    await (update(productos)..where((p) => p.id.equals(id))).write(
+      ProductosCompanion(
+        nombre: Value(nombre),
+        categoriaId: Value(categoriaId),
+        precioUnidad: Value(precioUnidadCentavos),
+        inventarioDisponible: Value(inventarioDisponible),
+        esPorPeso: Value(esPorPeso),
+        activo: Value(activo),
+        imagenUrl: Value(imagenUrl),
+        actualizadoEn: Value(DateTime.now()),
+      ),
+    );
+  }
+
   /// Busca usuario por PIN (Fase 1: comparación directa; migrar a hash).
   Future<Usuario?> findUsuarioByPin(String pin) {
     return (select(usuarios)

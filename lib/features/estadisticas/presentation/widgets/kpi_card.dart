@@ -8,18 +8,16 @@ class KpiCard extends StatelessWidget {
     required this.titulo,
     required this.valor,
     required this.icono,
-    this.subtitulo,
   });
 
   final String titulo;
   final String valor;
   final IconData icono;
-  final String? subtitulo;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.card),
@@ -27,45 +25,42 @@ class KpiCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.neutralSoft,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icono, color: AppColors.accent, size: 26),
+            child: Icon(icono, color: AppColors.accent, size: 22),
           ),
-          const Spacer(),
+          const SizedBox(height: 10),
           Text(
             titulo,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
               color: AppColors.textSecondary,
-              letterSpacing: 0.5,
+              letterSpacing: 0.3,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            valor,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          if (subtitulo != null) ...[
-            const SizedBox(height: 2),
-            Text(
-              subtitulo!,
+          const SizedBox(height: 2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              valor,
+              maxLines: 1,
               style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w500,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: AppColors.textPrimary,
               ),
             ),
-          ],
+          ),
         ],
       ),
     );

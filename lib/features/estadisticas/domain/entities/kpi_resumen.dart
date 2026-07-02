@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'package:carnitas_cheque/shared/database/models/kpi_models.dart';
+import 'package:carnitas_cheque/shared/database/models/ticket_models.dart';
 
 class KpiResumen extends Equatable {
   const KpiResumen({
@@ -9,6 +10,7 @@ class KpiResumen extends Equatable {
     required this.ticketPromedioCentavos,
     required this.ventasPorHora,
     required this.topProductos,
+    required this.tickets,
   });
 
   final int totalCentavos;
@@ -16,6 +18,7 @@ class KpiResumen extends Equatable {
   final int ticketPromedioCentavos;
   final List<VentaPorHora> ventasPorHora;
   final List<ProductoTop> topProductos;
+  final List<TicketVenta> tickets;
 
   factory KpiResumen.vacio() => const KpiResumen(
         totalCentavos: 0,
@@ -23,6 +26,7 @@ class KpiResumen extends Equatable {
         ticketPromedioCentavos: 0,
         ventasPorHora: [],
         topProductos: [],
+        tickets: [],
       );
 
   @override
@@ -32,5 +36,6 @@ class KpiResumen extends Equatable {
         ticketPromedioCentavos,
         ventasPorHora,
         topProductos,
+        tickets,
       ];
 }

@@ -1501,6 +1501,80 @@ class $VentasTable extends Ventas with TableInfo<$VentasTable, Venta> {
         requiredDuringInsert: false,
         defaultValue: const Constant('completado'),
       ).withConverter<EstadoVenta>($VentasTable.$converterestado);
+  @override
+  late final GeneratedColumnWithTypeConverter<TipoOrden, String> tipoOrden =
+      GeneratedColumn<String>(
+        'tipo_orden',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('para_llevar'),
+      ).withConverter<TipoOrden>($VentasTable.$convertertipoOrden);
+  static const VerificationMeta _mesaNumeroMeta = const VerificationMeta(
+    'mesaNumero',
+  );
+  @override
+  late final GeneratedColumn<int> mesaNumero = GeneratedColumn<int>(
+    'mesa_numero',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _telefonoMeta = const VerificationMeta(
+    'telefono',
+  );
+  @override
+  late final GeneratedColumn<String> telefono = GeneratedColumn<String>(
+    'telefono',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _calleMeta = const VerificationMeta('calle');
+  @override
+  late final GeneratedColumn<String> calle = GeneratedColumn<String>(
+    'calle',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _entreCalleMeta = const VerificationMeta(
+    'entreCalle',
+  );
+  @override
+  late final GeneratedColumn<String> entreCalle = GeneratedColumn<String>(
+    'entre_calle',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _coloniaMeta = const VerificationMeta(
+    'colonia',
+  );
+  @override
+  late final GeneratedColumn<String> colonia = GeneratedColumn<String>(
+    'colonia',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _numeroExteriorMeta = const VerificationMeta(
+    'numeroExterior',
+  );
+  @override
+  late final GeneratedColumn<String> numeroExterior = GeneratedColumn<String>(
+    'numero_exterior',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _notasMeta = const VerificationMeta('notas');
   @override
   late final GeneratedColumn<String> notas = GeneratedColumn<String>(
@@ -1530,6 +1604,13 @@ class $VentasTable extends Ventas with TableInfo<$VentasTable, Venta> {
     total,
     metodoPago,
     estado,
+    tipoOrden,
+    mesaNumero,
+    telefono,
+    calle,
+    entreCalle,
+    colonia,
+    numeroExterior,
     notas,
     creadoEn,
   ];
@@ -1569,6 +1650,45 @@ class $VentasTable extends Ventas with TableInfo<$VentasTable, Venta> {
       );
     } else if (isInserting) {
       context.missing(_totalMeta);
+    }
+    if (data.containsKey('mesa_numero')) {
+      context.handle(
+        _mesaNumeroMeta,
+        mesaNumero.isAcceptableOrUnknown(data['mesa_numero']!, _mesaNumeroMeta),
+      );
+    }
+    if (data.containsKey('telefono')) {
+      context.handle(
+        _telefonoMeta,
+        telefono.isAcceptableOrUnknown(data['telefono']!, _telefonoMeta),
+      );
+    }
+    if (data.containsKey('calle')) {
+      context.handle(
+        _calleMeta,
+        calle.isAcceptableOrUnknown(data['calle']!, _calleMeta),
+      );
+    }
+    if (data.containsKey('entre_calle')) {
+      context.handle(
+        _entreCalleMeta,
+        entreCalle.isAcceptableOrUnknown(data['entre_calle']!, _entreCalleMeta),
+      );
+    }
+    if (data.containsKey('colonia')) {
+      context.handle(
+        _coloniaMeta,
+        colonia.isAcceptableOrUnknown(data['colonia']!, _coloniaMeta),
+      );
+    }
+    if (data.containsKey('numero_exterior')) {
+      context.handle(
+        _numeroExteriorMeta,
+        numeroExterior.isAcceptableOrUnknown(
+          data['numero_exterior']!,
+          _numeroExteriorMeta,
+        ),
+      );
     }
     if (data.containsKey('notas')) {
       context.handle(
@@ -1619,6 +1739,36 @@ class $VentasTable extends Ventas with TableInfo<$VentasTable, Venta> {
           data['${effectivePrefix}estado'],
         )!,
       ),
+      tipoOrden: $VentasTable.$convertertipoOrden.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}tipo_orden'],
+        )!,
+      ),
+      mesaNumero: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mesa_numero'],
+      ),
+      telefono: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}telefono'],
+      ),
+      calle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}calle'],
+      ),
+      entreCalle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entre_calle'],
+      ),
+      colonia: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}colonia'],
+      ),
+      numeroExterior: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}numero_exterior'],
+      ),
       notas: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notas'],
@@ -1639,6 +1789,8 @@ class $VentasTable extends Ventas with TableInfo<$VentasTable, Venta> {
       const MetodoPagoConverter();
   static TypeConverter<EstadoVenta, String> $converterestado =
       const EstadoVentaConverter();
+  static TypeConverter<TipoOrden, String> $convertertipoOrden =
+      const TipoOrdenConverter();
 }
 
 class Venta extends DataClass implements Insertable<Venta> {
@@ -1650,6 +1802,17 @@ class Venta extends DataClass implements Insertable<Venta> {
   final int total;
   final MetodoPago metodoPago;
   final EstadoVenta estado;
+
+  /// Mesa, para llevar o domicilio.
+  final TipoOrden tipoOrden;
+  final int? mesaNumero;
+
+  /// Datos de entrega a domicilio.
+  final String? telefono;
+  final String? calle;
+  final String? entreCalle;
+  final String? colonia;
+  final String? numeroExterior;
   final String? notas;
   final DateTime creadoEn;
   const Venta({
@@ -1659,6 +1822,13 @@ class Venta extends DataClass implements Insertable<Venta> {
     required this.total,
     required this.metodoPago,
     required this.estado,
+    required this.tipoOrden,
+    this.mesaNumero,
+    this.telefono,
+    this.calle,
+    this.entreCalle,
+    this.colonia,
+    this.numeroExterior,
     this.notas,
     required this.creadoEn,
   });
@@ -1679,6 +1849,29 @@ class Venta extends DataClass implements Insertable<Venta> {
         $VentasTable.$converterestado.toSql(estado),
       );
     }
+    {
+      map['tipo_orden'] = Variable<String>(
+        $VentasTable.$convertertipoOrden.toSql(tipoOrden),
+      );
+    }
+    if (!nullToAbsent || mesaNumero != null) {
+      map['mesa_numero'] = Variable<int>(mesaNumero);
+    }
+    if (!nullToAbsent || telefono != null) {
+      map['telefono'] = Variable<String>(telefono);
+    }
+    if (!nullToAbsent || calle != null) {
+      map['calle'] = Variable<String>(calle);
+    }
+    if (!nullToAbsent || entreCalle != null) {
+      map['entre_calle'] = Variable<String>(entreCalle);
+    }
+    if (!nullToAbsent || colonia != null) {
+      map['colonia'] = Variable<String>(colonia);
+    }
+    if (!nullToAbsent || numeroExterior != null) {
+      map['numero_exterior'] = Variable<String>(numeroExterior);
+    }
     if (!nullToAbsent || notas != null) {
       map['notas'] = Variable<String>(notas);
     }
@@ -1694,6 +1887,25 @@ class Venta extends DataClass implements Insertable<Venta> {
       total: Value(total),
       metodoPago: Value(metodoPago),
       estado: Value(estado),
+      tipoOrden: Value(tipoOrden),
+      mesaNumero: mesaNumero == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mesaNumero),
+      telefono: telefono == null && nullToAbsent
+          ? const Value.absent()
+          : Value(telefono),
+      calle: calle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(calle),
+      entreCalle: entreCalle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(entreCalle),
+      colonia: colonia == null && nullToAbsent
+          ? const Value.absent()
+          : Value(colonia),
+      numeroExterior: numeroExterior == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numeroExterior),
       notas: notas == null && nullToAbsent
           ? const Value.absent()
           : Value(notas),
@@ -1713,6 +1925,13 @@ class Venta extends DataClass implements Insertable<Venta> {
       total: serializer.fromJson<int>(json['total']),
       metodoPago: serializer.fromJson<MetodoPago>(json['metodoPago']),
       estado: serializer.fromJson<EstadoVenta>(json['estado']),
+      tipoOrden: serializer.fromJson<TipoOrden>(json['tipoOrden']),
+      mesaNumero: serializer.fromJson<int?>(json['mesaNumero']),
+      telefono: serializer.fromJson<String?>(json['telefono']),
+      calle: serializer.fromJson<String?>(json['calle']),
+      entreCalle: serializer.fromJson<String?>(json['entreCalle']),
+      colonia: serializer.fromJson<String?>(json['colonia']),
+      numeroExterior: serializer.fromJson<String?>(json['numeroExterior']),
       notas: serializer.fromJson<String?>(json['notas']),
       creadoEn: serializer.fromJson<DateTime>(json['creadoEn']),
     );
@@ -1727,6 +1946,13 @@ class Venta extends DataClass implements Insertable<Venta> {
       'total': serializer.toJson<int>(total),
       'metodoPago': serializer.toJson<MetodoPago>(metodoPago),
       'estado': serializer.toJson<EstadoVenta>(estado),
+      'tipoOrden': serializer.toJson<TipoOrden>(tipoOrden),
+      'mesaNumero': serializer.toJson<int?>(mesaNumero),
+      'telefono': serializer.toJson<String?>(telefono),
+      'calle': serializer.toJson<String?>(calle),
+      'entreCalle': serializer.toJson<String?>(entreCalle),
+      'colonia': serializer.toJson<String?>(colonia),
+      'numeroExterior': serializer.toJson<String?>(numeroExterior),
       'notas': serializer.toJson<String?>(notas),
       'creadoEn': serializer.toJson<DateTime>(creadoEn),
     };
@@ -1739,6 +1965,13 @@ class Venta extends DataClass implements Insertable<Venta> {
     int? total,
     MetodoPago? metodoPago,
     EstadoVenta? estado,
+    TipoOrden? tipoOrden,
+    Value<int?> mesaNumero = const Value.absent(),
+    Value<String?> telefono = const Value.absent(),
+    Value<String?> calle = const Value.absent(),
+    Value<String?> entreCalle = const Value.absent(),
+    Value<String?> colonia = const Value.absent(),
+    Value<String?> numeroExterior = const Value.absent(),
     Value<String?> notas = const Value.absent(),
     DateTime? creadoEn,
   }) => Venta(
@@ -1748,6 +1981,15 @@ class Venta extends DataClass implements Insertable<Venta> {
     total: total ?? this.total,
     metodoPago: metodoPago ?? this.metodoPago,
     estado: estado ?? this.estado,
+    tipoOrden: tipoOrden ?? this.tipoOrden,
+    mesaNumero: mesaNumero.present ? mesaNumero.value : this.mesaNumero,
+    telefono: telefono.present ? telefono.value : this.telefono,
+    calle: calle.present ? calle.value : this.calle,
+    entreCalle: entreCalle.present ? entreCalle.value : this.entreCalle,
+    colonia: colonia.present ? colonia.value : this.colonia,
+    numeroExterior: numeroExterior.present
+        ? numeroExterior.value
+        : this.numeroExterior,
     notas: notas.present ? notas.value : this.notas,
     creadoEn: creadoEn ?? this.creadoEn,
   );
@@ -1763,6 +2005,19 @@ class Venta extends DataClass implements Insertable<Venta> {
           ? data.metodoPago.value
           : this.metodoPago,
       estado: data.estado.present ? data.estado.value : this.estado,
+      tipoOrden: data.tipoOrden.present ? data.tipoOrden.value : this.tipoOrden,
+      mesaNumero: data.mesaNumero.present
+          ? data.mesaNumero.value
+          : this.mesaNumero,
+      telefono: data.telefono.present ? data.telefono.value : this.telefono,
+      calle: data.calle.present ? data.calle.value : this.calle,
+      entreCalle: data.entreCalle.present
+          ? data.entreCalle.value
+          : this.entreCalle,
+      colonia: data.colonia.present ? data.colonia.value : this.colonia,
+      numeroExterior: data.numeroExterior.present
+          ? data.numeroExterior.value
+          : this.numeroExterior,
       notas: data.notas.present ? data.notas.value : this.notas,
       creadoEn: data.creadoEn.present ? data.creadoEn.value : this.creadoEn,
     );
@@ -1777,6 +2032,13 @@ class Venta extends DataClass implements Insertable<Venta> {
           ..write('total: $total, ')
           ..write('metodoPago: $metodoPago, ')
           ..write('estado: $estado, ')
+          ..write('tipoOrden: $tipoOrden, ')
+          ..write('mesaNumero: $mesaNumero, ')
+          ..write('telefono: $telefono, ')
+          ..write('calle: $calle, ')
+          ..write('entreCalle: $entreCalle, ')
+          ..write('colonia: $colonia, ')
+          ..write('numeroExterior: $numeroExterior, ')
           ..write('notas: $notas, ')
           ..write('creadoEn: $creadoEn')
           ..write(')'))
@@ -1791,6 +2053,13 @@ class Venta extends DataClass implements Insertable<Venta> {
     total,
     metodoPago,
     estado,
+    tipoOrden,
+    mesaNumero,
+    telefono,
+    calle,
+    entreCalle,
+    colonia,
+    numeroExterior,
     notas,
     creadoEn,
   );
@@ -1804,6 +2073,13 @@ class Venta extends DataClass implements Insertable<Venta> {
           other.total == this.total &&
           other.metodoPago == this.metodoPago &&
           other.estado == this.estado &&
+          other.tipoOrden == this.tipoOrden &&
+          other.mesaNumero == this.mesaNumero &&
+          other.telefono == this.telefono &&
+          other.calle == this.calle &&
+          other.entreCalle == this.entreCalle &&
+          other.colonia == this.colonia &&
+          other.numeroExterior == this.numeroExterior &&
           other.notas == this.notas &&
           other.creadoEn == this.creadoEn);
 }
@@ -1815,6 +2091,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
   final Value<int> total;
   final Value<MetodoPago> metodoPago;
   final Value<EstadoVenta> estado;
+  final Value<TipoOrden> tipoOrden;
+  final Value<int?> mesaNumero;
+  final Value<String?> telefono;
+  final Value<String?> calle;
+  final Value<String?> entreCalle;
+  final Value<String?> colonia;
+  final Value<String?> numeroExterior;
   final Value<String?> notas;
   final Value<DateTime> creadoEn;
   const VentasCompanion({
@@ -1824,6 +2107,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
     this.total = const Value.absent(),
     this.metodoPago = const Value.absent(),
     this.estado = const Value.absent(),
+    this.tipoOrden = const Value.absent(),
+    this.mesaNumero = const Value.absent(),
+    this.telefono = const Value.absent(),
+    this.calle = const Value.absent(),
+    this.entreCalle = const Value.absent(),
+    this.colonia = const Value.absent(),
+    this.numeroExterior = const Value.absent(),
     this.notas = const Value.absent(),
     this.creadoEn = const Value.absent(),
   });
@@ -1834,6 +2124,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
     required int total,
     required MetodoPago metodoPago,
     this.estado = const Value.absent(),
+    this.tipoOrden = const Value.absent(),
+    this.mesaNumero = const Value.absent(),
+    this.telefono = const Value.absent(),
+    this.calle = const Value.absent(),
+    this.entreCalle = const Value.absent(),
+    this.colonia = const Value.absent(),
+    this.numeroExterior = const Value.absent(),
     this.notas = const Value.absent(),
     this.creadoEn = const Value.absent(),
   }) : usuarioId = Value(usuarioId),
@@ -1846,6 +2143,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
     Expression<int>? total,
     Expression<String>? metodoPago,
     Expression<String>? estado,
+    Expression<String>? tipoOrden,
+    Expression<int>? mesaNumero,
+    Expression<String>? telefono,
+    Expression<String>? calle,
+    Expression<String>? entreCalle,
+    Expression<String>? colonia,
+    Expression<String>? numeroExterior,
     Expression<String>? notas,
     Expression<DateTime>? creadoEn,
   }) {
@@ -1856,6 +2160,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
       if (total != null) 'total': total,
       if (metodoPago != null) 'metodo_pago': metodoPago,
       if (estado != null) 'estado': estado,
+      if (tipoOrden != null) 'tipo_orden': tipoOrden,
+      if (mesaNumero != null) 'mesa_numero': mesaNumero,
+      if (telefono != null) 'telefono': telefono,
+      if (calle != null) 'calle': calle,
+      if (entreCalle != null) 'entre_calle': entreCalle,
+      if (colonia != null) 'colonia': colonia,
+      if (numeroExterior != null) 'numero_exterior': numeroExterior,
       if (notas != null) 'notas': notas,
       if (creadoEn != null) 'creado_en': creadoEn,
     });
@@ -1868,6 +2179,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
     Value<int>? total,
     Value<MetodoPago>? metodoPago,
     Value<EstadoVenta>? estado,
+    Value<TipoOrden>? tipoOrden,
+    Value<int?>? mesaNumero,
+    Value<String?>? telefono,
+    Value<String?>? calle,
+    Value<String?>? entreCalle,
+    Value<String?>? colonia,
+    Value<String?>? numeroExterior,
     Value<String?>? notas,
     Value<DateTime>? creadoEn,
   }) {
@@ -1878,6 +2196,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
       total: total ?? this.total,
       metodoPago: metodoPago ?? this.metodoPago,
       estado: estado ?? this.estado,
+      tipoOrden: tipoOrden ?? this.tipoOrden,
+      mesaNumero: mesaNumero ?? this.mesaNumero,
+      telefono: telefono ?? this.telefono,
+      calle: calle ?? this.calle,
+      entreCalle: entreCalle ?? this.entreCalle,
+      colonia: colonia ?? this.colonia,
+      numeroExterior: numeroExterior ?? this.numeroExterior,
       notas: notas ?? this.notas,
       creadoEn: creadoEn ?? this.creadoEn,
     );
@@ -1908,6 +2233,29 @@ class VentasCompanion extends UpdateCompanion<Venta> {
         $VentasTable.$converterestado.toSql(estado.value),
       );
     }
+    if (tipoOrden.present) {
+      map['tipo_orden'] = Variable<String>(
+        $VentasTable.$convertertipoOrden.toSql(tipoOrden.value),
+      );
+    }
+    if (mesaNumero.present) {
+      map['mesa_numero'] = Variable<int>(mesaNumero.value);
+    }
+    if (telefono.present) {
+      map['telefono'] = Variable<String>(telefono.value);
+    }
+    if (calle.present) {
+      map['calle'] = Variable<String>(calle.value);
+    }
+    if (entreCalle.present) {
+      map['entre_calle'] = Variable<String>(entreCalle.value);
+    }
+    if (colonia.present) {
+      map['colonia'] = Variable<String>(colonia.value);
+    }
+    if (numeroExterior.present) {
+      map['numero_exterior'] = Variable<String>(numeroExterior.value);
+    }
     if (notas.present) {
       map['notas'] = Variable<String>(notas.value);
     }
@@ -1926,6 +2274,13 @@ class VentasCompanion extends UpdateCompanion<Venta> {
           ..write('total: $total, ')
           ..write('metodoPago: $metodoPago, ')
           ..write('estado: $estado, ')
+          ..write('tipoOrden: $tipoOrden, ')
+          ..write('mesaNumero: $mesaNumero, ')
+          ..write('telefono: $telefono, ')
+          ..write('calle: $calle, ')
+          ..write('entreCalle: $entreCalle, ')
+          ..write('colonia: $colonia, ')
+          ..write('numeroExterior: $numeroExterior, ')
           ..write('notas: $notas, ')
           ..write('creadoEn: $creadoEn')
           ..write(')'))
@@ -3528,6 +3883,13 @@ typedef $$VentasTableCreateCompanionBuilder =
       required int total,
       required MetodoPago metodoPago,
       Value<EstadoVenta> estado,
+      Value<TipoOrden> tipoOrden,
+      Value<int?> mesaNumero,
+      Value<String?> telefono,
+      Value<String?> calle,
+      Value<String?> entreCalle,
+      Value<String?> colonia,
+      Value<String?> numeroExterior,
       Value<String?> notas,
       Value<DateTime> creadoEn,
     });
@@ -3539,6 +3901,13 @@ typedef $$VentasTableUpdateCompanionBuilder =
       Value<int> total,
       Value<MetodoPago> metodoPago,
       Value<EstadoVenta> estado,
+      Value<TipoOrden> tipoOrden,
+      Value<int?> mesaNumero,
+      Value<String?> telefono,
+      Value<String?> calle,
+      Value<String?> entreCalle,
+      Value<String?> colonia,
+      Value<String?> numeroExterior,
       Value<String?> notas,
       Value<DateTime> creadoEn,
     });
@@ -3618,6 +3987,42 @@ class $$VentasTableFilterComposer
         column: $table.estado,
         builder: (column) => ColumnWithTypeConverterFilters(column),
       );
+
+  ColumnWithTypeConverterFilters<TipoOrden, TipoOrden, String> get tipoOrden =>
+      $composableBuilder(
+        column: $table.tipoOrden,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<int> get mesaNumero => $composableBuilder(
+    column: $table.mesaNumero,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get telefono => $composableBuilder(
+    column: $table.telefono,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get calle => $composableBuilder(
+    column: $table.calle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entreCalle => $composableBuilder(
+    column: $table.entreCalle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get colonia => $composableBuilder(
+    column: $table.colonia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get numeroExterior => $composableBuilder(
+    column: $table.numeroExterior,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get notas => $composableBuilder(
     column: $table.notas,
@@ -3712,6 +4117,41 @@ class $$VentasTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get tipoOrden => $composableBuilder(
+    column: $table.tipoOrden,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get mesaNumero => $composableBuilder(
+    column: $table.mesaNumero,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get telefono => $composableBuilder(
+    column: $table.telefono,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get calle => $composableBuilder(
+    column: $table.calle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entreCalle => $composableBuilder(
+    column: $table.entreCalle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get colonia => $composableBuilder(
+    column: $table.colonia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get numeroExterior => $composableBuilder(
+    column: $table.numeroExterior,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notas => $composableBuilder(
     column: $table.notas,
     builder: (column) => ColumnOrderings(column),
@@ -3774,6 +4214,33 @@ class $$VentasTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<EstadoVenta, String> get estado =>
       $composableBuilder(column: $table.estado, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<TipoOrden, String> get tipoOrden =>
+      $composableBuilder(column: $table.tipoOrden, builder: (column) => column);
+
+  GeneratedColumn<int> get mesaNumero => $composableBuilder(
+    column: $table.mesaNumero,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get telefono =>
+      $composableBuilder(column: $table.telefono, builder: (column) => column);
+
+  GeneratedColumn<String> get calle =>
+      $composableBuilder(column: $table.calle, builder: (column) => column);
+
+  GeneratedColumn<String> get entreCalle => $composableBuilder(
+    column: $table.entreCalle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get colonia =>
+      $composableBuilder(column: $table.colonia, builder: (column) => column);
+
+  GeneratedColumn<String> get numeroExterior => $composableBuilder(
+    column: $table.numeroExterior,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get notas =>
       $composableBuilder(column: $table.notas, builder: (column) => column);
@@ -3864,6 +4331,13 @@ class $$VentasTableTableManager
                 Value<int> total = const Value.absent(),
                 Value<MetodoPago> metodoPago = const Value.absent(),
                 Value<EstadoVenta> estado = const Value.absent(),
+                Value<TipoOrden> tipoOrden = const Value.absent(),
+                Value<int?> mesaNumero = const Value.absent(),
+                Value<String?> telefono = const Value.absent(),
+                Value<String?> calle = const Value.absent(),
+                Value<String?> entreCalle = const Value.absent(),
+                Value<String?> colonia = const Value.absent(),
+                Value<String?> numeroExterior = const Value.absent(),
                 Value<String?> notas = const Value.absent(),
                 Value<DateTime> creadoEn = const Value.absent(),
               }) => VentasCompanion(
@@ -3873,6 +4347,13 @@ class $$VentasTableTableManager
                 total: total,
                 metodoPago: metodoPago,
                 estado: estado,
+                tipoOrden: tipoOrden,
+                mesaNumero: mesaNumero,
+                telefono: telefono,
+                calle: calle,
+                entreCalle: entreCalle,
+                colonia: colonia,
+                numeroExterior: numeroExterior,
                 notas: notas,
                 creadoEn: creadoEn,
               ),
@@ -3884,6 +4365,13 @@ class $$VentasTableTableManager
                 required int total,
                 required MetodoPago metodoPago,
                 Value<EstadoVenta> estado = const Value.absent(),
+                Value<TipoOrden> tipoOrden = const Value.absent(),
+                Value<int?> mesaNumero = const Value.absent(),
+                Value<String?> telefono = const Value.absent(),
+                Value<String?> calle = const Value.absent(),
+                Value<String?> entreCalle = const Value.absent(),
+                Value<String?> colonia = const Value.absent(),
+                Value<String?> numeroExterior = const Value.absent(),
                 Value<String?> notas = const Value.absent(),
                 Value<DateTime> creadoEn = const Value.absent(),
               }) => VentasCompanion.insert(
@@ -3893,6 +4381,13 @@ class $$VentasTableTableManager
                 total: total,
                 metodoPago: metodoPago,
                 estado: estado,
+                tipoOrden: tipoOrden,
+                mesaNumero: mesaNumero,
+                telefono: telefono,
+                calle: calle,
+                entreCalle: entreCalle,
+                colonia: colonia,
+                numeroExterior: numeroExterior,
                 notas: notas,
                 creadoEn: creadoEn,
               ),

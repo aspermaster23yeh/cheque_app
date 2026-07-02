@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:carnitas_cheque/features/pos_venta/domain/entities/cart_item.dart';
 import 'package:carnitas_cheque/shared/core/enums/metodo_pago.dart';
+import 'package:carnitas_cheque/shared/core/models/datos_orden.dart';
 import 'package:carnitas_cheque/shared/core/utils/money_formatter.dart';
 import 'package:carnitas_cheque/shared/database/local_db.dart';
 
@@ -67,6 +68,7 @@ class CartCubit extends Cubit<CartState> {
   /// Ejecuta la transacción atómica de venta.
   Future<void> confirmarOrden({
     required int usuarioId,
+    required DatosOrden datosOrden,
     MetodoPago metodoPago = MetodoPago.efectivo,
     String? notas,
   }) async {
@@ -96,6 +98,7 @@ class CartCubit extends Cubit<CartState> {
         usuarioId: usuarioId,
         metodoPago: metodoPago,
         detalles: detalles,
+        datosOrden: datosOrden,
         notas: notas,
       );
 

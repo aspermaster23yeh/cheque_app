@@ -22,12 +22,14 @@ class EstadisticasLocalDataSource {
       _db.contarVentasEnRango(desde, hasta),
       _db.ventasPorHoraEnRango(desde, hasta),
       _db.topProductosEnRango(desde, hasta),
+      _db.obtenerTicketsEnRango(desde, hasta),
     ]);
 
     final total = results[0] as int;
     final cantidad = results[1] as int;
     final porHora = results[2] as List;
     final top = results[3] as List;
+    final tickets = results[4] as List;
 
     final ticketPromedio =
         cantidad > 0 ? (total / cantidad).round() : 0;
@@ -38,6 +40,7 @@ class EstadisticasLocalDataSource {
       ticketPromedioCentavos: ticketPromedio,
       ventasPorHora: porHora.cast(),
       topProductos: top.cast(),
+      tickets: tickets.cast(),
     );
   }
 }

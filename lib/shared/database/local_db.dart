@@ -3,8 +3,11 @@ import 'package:drift/drift.dart';
 import 'package:carnitas_cheque/shared/core/enums/estado_venta.dart';
 import 'package:carnitas_cheque/shared/core/enums/metodo_pago.dart';
 import 'package:carnitas_cheque/shared/core/enums/rol_usuario.dart';
+import 'package:carnitas_cheque/shared/core/enums/tipo_orden.dart';
 import 'package:carnitas_cheque/shared/database/connection/native.dart';
+import 'package:carnitas_cheque/shared/core/models/datos_orden.dart';
 import 'package:carnitas_cheque/shared/database/models/kpi_models.dart';
+import 'package:carnitas_cheque/shared/database/models/ticket_models.dart';
 import 'package:carnitas_cheque/shared/database/tables/categorias.dart';
 import 'package:carnitas_cheque/shared/database/tables/detalles_venta.dart';
 import 'package:carnitas_cheque/shared/database/tables/productos.dart';
@@ -29,7 +32,7 @@ class LocalDatabase extends _$LocalDatabase {
   LocalDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -40,6 +43,15 @@ class LocalDatabase extends _$LocalDatabase {
         onUpgrade: (m, from, to) async {
           if (from < 2) {
             await _actualizarPinesUsuarios();
+          }
+          if (from < 3) {
+            await m.addColumn(ventas, ventas.tipoOrden);
+            await m.addColumn(ventas, ventas.mesaNumero);
+            await m.addColumn(ventas, ventas.telefono);
+            await m.addColumn(ventas, ventas.calle);
+            await m.addColumn(ventas, ventas.entreCalle);
+            await m.addColumn(ventas, ventas.colonia);
+            await m.addColumn(ventas, ventas.numeroExterior);
           }
         },
       );
@@ -138,6 +150,7 @@ class LocalDatabase extends _$LocalDatabase {
     required int usuarioId,
     required MetodoPago metodoPago,
     required List<DetallesVentaCompanion> detalles,
+    required DatosOrden datosOrden,
     String? notas,
   }) async {
     return transaction(() async {
@@ -151,6 +164,13 @@ class LocalDatabase extends _$LocalDatabase {
           usuarioId: usuarioId,
           total: totalCentavos,
           metodoPago: metodoPago,
+          tipoOrden: Value(datosOrden.tipo),
+          mesaNumero: Value(datosOrden.mesaNumero),
+          telefono: Value(datosOrden.telefono),
+          calle: Value(datosOrden.calle),
+          entreCalle: Value(datosOrden.entreCalle),
+          colonia: Value(datosOrden.colonia),
+          numeroExterior: Value(datosOrden.numeroExterior),
           notas: Value(notas),
         ),
       );
@@ -164,6 +184,65 @@ class LocalDatabase extends _$LocalDatabase {
 
       return ventaId;
     });
+  }
+
+  /// Tickets del día con todas las líneas de productos vendidos.
+  Future<List<TicketVenta>> obtenerTicketsEnRango(
+    DateTime desde,
+    DateTime hasta,
+  ) async {
+    final ventasDelDia = await (select(ventas)
+          ..where(
+            (v) =>
+                v.estado.equals(EstadoVenta.completado.value) &
+                v.fechaVenta.isBiggerOrEqualValue(desde) &
+                v.fechaVenta.isSmallerThanValue(hasta),
+          )
+          ..orderBy([(v) => OrderingTerm.desc(v.fechaVenta)]))
+        .get();
+
+    final tickets = <TicketVenta>[];
+
+    for (final v in ventasDelDia) {
+      final query = select(detallesVenta).join([
+        innerJoin(
+          productos,
+          productos.id.equalsExp(detallesVenta.productoId),
+        ),
+      ])
+        ..where(detallesVenta.ventaId.equals(v.id));
+
+      final rows = await query.get();
+      final lineas = rows
+          .map(
+            (row) => TicketLinea(
+              productoNombre: row.readTable(productos).nombre,
+              cantidad: row.readTable(detallesVenta).cantidad,
+              precioHistorico: row.readTable(detallesVenta).precioHistorico,
+              subtotal: row.readTable(detallesVenta).subtotal,
+              esPorPeso: row.readTable(productos).esPorPeso,
+            ),
+          )
+          .toList();
+
+      tickets.add(
+        TicketVenta(
+          id: v.id,
+          fecha: v.fechaVenta,
+          totalCentavos: v.total,
+          tipoOrden: v.tipoOrden,
+          mesaNumero: v.mesaNumero,
+          telefono: v.telefono,
+          calle: v.calle,
+          entreCalle: v.entreCalle,
+          colonia: v.colonia,
+          numeroExterior: v.numeroExterior,
+          lineas: lineas,
+        ),
+      );
+    }
+
+    return tickets;
   }
 
   /// KPI: total de ventas completadas en un rango de fechas (centavos).

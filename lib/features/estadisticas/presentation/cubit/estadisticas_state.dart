@@ -11,6 +11,7 @@ class EstadisticasState extends Equatable {
       ticketPromedioCentavos: 0,
       ventasPorHora: [],
       topProductos: [],
+      tickets: [],
     ),
     this.errorMensaje,
   });

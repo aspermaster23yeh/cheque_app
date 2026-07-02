@@ -5,11 +5,13 @@ import 'package:carnitas_cheque/features/estadisticas/data/datasources/estadisti
 import 'package:carnitas_cheque/features/estadisticas/domain/entities/kpi_resumen.dart';
 import 'package:carnitas_cheque/features/estadisticas/presentation/cubit/estadisticas_cubit.dart';
 import 'package:carnitas_cheque/features/estadisticas/presentation/widgets/kpi_card.dart';
+import 'package:carnitas_cheque/features/estadisticas/presentation/widgets/ticket_card.dart';
 import 'package:carnitas_cheque/features/estadisticas/presentation/widgets/ventas_chart.dart';
 import 'package:carnitas_cheque/shared/core/theme/app_theme.dart';
 import 'package:carnitas_cheque/shared/core/utils/money_formatter.dart';
 import 'package:carnitas_cheque/shared/database/local_db.dart';
 import 'package:carnitas_cheque/shared/database/models/kpi_models.dart';
+import 'package:carnitas_cheque/shared/database/models/ticket_models.dart';
 
 class EstadisticasPage extends StatelessWidget {
   const EstadisticasPage({super.key, required this.db});
@@ -85,6 +87,17 @@ class _EstadisticasView extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _topProductos(state.resumen.topProductos),
+              const SizedBox(height: 24),
+              const Text(
+                'Tickets del día',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _ticketsDelDia(state.resumen.tickets),
             ],
           ),
         );
@@ -194,6 +207,32 @@ class _EstadisticasView extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+
+  Widget _ticketsDelDia(List<TicketVenta> tickets) {
+    if (tickets.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          boxShadow: AppShadows.soft,
+        ),
+        child: const Center(
+          child: Text(
+            'Aún no hay tickets registrados hoy',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: tickets.map((t) => TicketCard(ticket: t)).toList(),
     );
   }
 }

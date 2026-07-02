@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:carnitas_cheque/features/pos_venta/domain/entities/cart_item.dart';
 import 'package:carnitas_cheque/features/pos_venta/presentation/cubit/cart_cubit.dart';
+import 'package:carnitas_cheque/features/pos_venta/presentation/widgets/checkout_sheet.dart';
 import 'package:carnitas_cheque/shared/core/theme/app_theme.dart';
 
 /// Panel inferior elevado — lista del carrito, total gigante y botón de cobro.
@@ -43,6 +44,7 @@ class CartPanel extends StatelessWidget {
   void _onCheckoutChange(BuildContext context, CartState state) {
     final messenger = ScaffoldMessenger.of(context);
     if (state.checkoutStatus == CheckoutStatus.exito) {
+      Navigator.of(context).maybePop(); // Cierra checkout sheet si está abierto.
       messenger.showSnackBar(
         SnackBar(
           content: Text('Orden #${state.ultimaVentaId} registrada'),
@@ -246,9 +248,7 @@ class _CheckoutBar extends StatelessWidget {
             child: ElevatedButton(
               onPressed: (state.isEmpty || procesando)
                   ? null
-                  : () => context.read<CartCubit>().confirmarOrden(
-                        usuarioId: usuarioId,
-                      ),
+                  : () => _abrirCheckout(context, state.totalDisplay),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accent,
                 disabledBackgroundColor: AppColors.border,
@@ -278,6 +278,24 @@ class _CheckoutBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _abrirCheckout(BuildContext context, String totalDisplay) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => BlocProvider.value(
+        value: context.read<CartCubit>(),
+        child: CheckoutSheet(
+          usuarioId: usuarioId,
+          totalDisplay: totalDisplay,
+        ),
       ),
     );
   }

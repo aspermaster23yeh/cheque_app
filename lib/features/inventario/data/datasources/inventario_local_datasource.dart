@@ -30,4 +30,24 @@ class InventarioLocalDataSource {
       imagenUrl: imagenUrl,
     );
   }
+
+  Future<int> crearProducto({
+    required String nombre,
+    required int categoriaId,
+    required int precioUnidadCentavos,
+    required double inventarioDisponible,
+    required bool esPorPeso,
+    required bool activo,
+    String? imagenUrl,
+  }) {
+    return _db.crearProducto(
+      nombre: nombre,
+      categoriaId: categoriaId,
+      precioUnidadCentavos: precioUnidadCentavos,
+      inventarioDisponible: inventarioDisponible,
+      esPorPeso: esPorPeso,
+      activo: activo,
+      imagenUrl: imagenUrl,
+    );
+  }
 }

@@ -8,7 +8,7 @@ import 'package:carnitas_cheque/shared/core/theme/app_theme.dart';
 import 'package:carnitas_cheque/shared/core/utils/money_formatter.dart';
 import 'package:carnitas_cheque/shared/database/local_db.dart';
 
-/// Lista completa de productos con acceso a edición de inventario y precios.
+/// Lista completa de productos con acceso a edición y creación.
 class ProductosAdminPage extends StatelessWidget {
   const ProductosAdminPage({super.key, required this.db});
 
@@ -39,85 +39,166 @@ class _ProductosViewState extends State<_ProductosView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.chip),
-              boxShadow: AppShadows.soft,
-            ),
-            child: TextField(
-              onChanged: (v) => setState(() => _busqueda = v.trim().toLowerCase()),
-              decoration: const InputDecoration(
-                hintText: 'Buscar en todos los productos...',
-                hintStyle: TextStyle(color: AppColors.textSecondary),
-                prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 14),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _abrirCreacion(context),
+        backgroundColor: AppColors.accent,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text(
+          'Nuevo producto',
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.chip),
+                boxShadow: AppShadows.soft,
+              ),
+              child: TextField(
+                onChanged: (v) =>
+                    setState(() => _busqueda = v.trim().toLowerCase()),
+                decoration: const InputDecoration(
+                  hintText: 'Buscar en todos los productos...',
+                  hintStyle: TextStyle(color: AppColors.textSecondary),
+                  prefixIcon:
+                      Icon(Icons.search, color: AppColors.textSecondary),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ),
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: StreamBuilder<List<Producto>>(
-            stream: widget.dataSource.watchProductos(),
-            builder: (context, snap) {
-              if (!snap.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.accent),
-                );
-              }
-
-              final productos = snap.data!
-                  .where((p) =>
-                      _busqueda.isEmpty ||
-                      p.nombre.toLowerCase().contains(_busqueda))
-                  .toList();
-
-              if (productos.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'Sin productos',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                );
-              }
-
-              return StreamBuilder<List<Categoria>>(
-                stream: widget.dataSource.watchCategorias(),
-                builder: (context, catSnap) {
-                  final categorias = catSnap.data ?? [];
-                  final catMap = {
-                    for (final c in categorias) c.id: c.nombre,
-                  };
-
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                    itemCount: productos.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, i) {
-                      final p = productos[i];
-                      return _ProductoAdminTile(
-                        producto: p,
-                        categoriaNombre:
-                            catMap[p.categoriaId] ?? 'Sin categoría',
-                        onTap: () => _abrirEdicion(context, p, categorias),
-                      );
-                    },
+          Expanded(
+            child: StreamBuilder<List<Producto>>(
+              stream: widget.dataSource.watchProductos(),
+              builder: (context, snap) {
+                if (!snap.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.accent),
                   );
-                },
-              );
-            },
+                }
+
+                final todos = snap.data!;
+                final productos = todos
+                    .where((p) =>
+                        _busqueda.isEmpty ||
+                        p.nombre.toLowerCase().contains(_busqueda))
+                    .toList();
+
+                return StreamBuilder<List<Categoria>>(
+                  stream: widget.dataSource.watchCategorias(),
+                  builder: (context, catSnap) {
+                    final categorias = catSnap.data ?? [];
+
+                    if (productos.isEmpty) {
+                      return _emptyState(
+                        hayProductos: todos.isNotEmpty,
+                        categorias: categorias,
+                      );
+                    }
+
+                    final catMap = {
+                      for (final c in categorias) c.id: c.nombre,
+                    };
+
+                    return ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
+                      itemCount: productos.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      itemBuilder: (context, i) {
+                        final p = productos[i];
+                        return _ProductoAdminTile(
+                          producto: p,
+                          categoriaNombre:
+                              catMap[p.categoriaId] ?? 'Sin categoría',
+                          onTap: () =>
+                              _abrirEdicion(context, p, categorias),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  Widget _emptyState({
+    required bool hayProductos,
+    required List<Categoria> categorias,
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              hayProductos ? Icons.search_off : Icons.inventory_2_outlined,
+              size: 48,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              hayProductos
+                  ? 'No hay coincidencias'
+                  : 'Aún no hay productos',
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+            if (!hayProductos && categorias.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => _abrirCreacion(context, categorias),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accent,
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.add),
+                label: const Text('Crear primer producto'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _abrirCreacion(
+    BuildContext context, [
+    List<Categoria>? categoriasPrecargadas,
+  ]) {
+    final categorias = categoriasPrecargadas;
+    if (categorias != null && categorias.isNotEmpty) {
+      _mostrarSheet(context, categorias);
+      return;
+    }
+
+    widget.dataSource.watchCategorias().first.then((cats) {
+      if (!context.mounted) return;
+      if (cats.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No hay categorías disponibles'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+      _mostrarSheet(context, cats);
+    });
   }
 
   void _abrirEdicion(
@@ -125,6 +206,14 @@ class _ProductosViewState extends State<_ProductosView> {
     Producto producto,
     List<Categoria> categorias,
   ) {
+    _mostrarSheet(context, categorias, producto: producto);
+  }
+
+  void _mostrarSheet(
+    BuildContext context,
+    List<Categoria> categorias, {
+    Producto? producto,
+  }) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

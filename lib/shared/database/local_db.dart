@@ -102,6 +102,29 @@ class LocalDatabase extends _$LocalDatabase {
     );
   }
 
+  /// Crea un producto nuevo desde el panel admin.
+  Future<int> crearProducto({
+    required String nombre,
+    required int categoriaId,
+    required int precioUnidadCentavos,
+    required double inventarioDisponible,
+    required bool esPorPeso,
+    required bool activo,
+    String? imagenUrl,
+  }) {
+    return into(productos).insert(
+      ProductosCompanion.insert(
+        categoriaId: categoriaId,
+        nombre: nombre,
+        precioUnidad: precioUnidadCentavos,
+        esPorPeso: Value(esPorPeso),
+        inventarioDisponible: Value(inventarioDisponible),
+        imagenUrl: Value(imagenUrl),
+        activo: Value(activo),
+      ),
+    );
+  }
+
   /// Busca usuario por PIN (Fase 1: comparación directa; migrar a hash).
   Future<Usuario?> findUsuarioByPin(String pin) {
     return (select(usuarios)

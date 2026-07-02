@@ -6,16 +6,19 @@ import 'package:carnitas_cheque/shared/core/theme/app_theme.dart';
 import 'package:carnitas_cheque/shared/core/utils/money_formatter.dart';
 import 'package:carnitas_cheque/shared/database/local_db.dart';
 
-/// Formulario modal para editar precio, inventario, imagen y más.
+/// Formulario modal para crear o editar un producto.
 class ProductoEditSheet extends StatefulWidget {
   const ProductoEditSheet({
     super.key,
-    required this.producto,
+    this.producto,
     required this.categorias,
   });
 
-  final Producto producto;
+  /// Si es null, el formulario opera en modo creación.
+  final Producto? producto;
   final List<Categoria> categorias;
+
+  bool get esCreacion => producto == null;
 
   @override
   State<ProductoEditSheet> createState() => _ProductoEditSheetState();
@@ -34,17 +37,17 @@ class _ProductoEditSheetState extends State<ProductoEditSheet> {
   void initState() {
     super.initState();
     final p = widget.producto;
-    _nombreCtrl = TextEditingController(text: p.nombre);
+    _nombreCtrl = TextEditingController(text: p?.nombre ?? '');
     _precioCtrl = TextEditingController(
-      text: (p.precioUnidad / 100).toStringAsFixed(2),
+      text: p != null ? (p.precioUnidad / 100).toStringAsFixed(2) : '',
     );
     _inventarioCtrl = TextEditingController(
-      text: p.inventarioDisponible.toString(),
+      text: p?.inventarioDisponible.toString() ?? '0',
     );
-    _imagenCtrl = TextEditingController(text: p.imagenUrl ?? '');
-    _categoriaId = p.categoriaId;
-    _esPorPeso = p.esPorPeso;
-    _activo = p.activo;
+    _imagenCtrl = TextEditingController(text: p?.imagenUrl ?? '');
+    _categoriaId = p?.categoriaId ?? widget.categorias.first.id;
+    _esPorPeso = p?.esPorPeso ?? false;
+    _activo = p?.activo ?? true;
   }
 
   @override
@@ -64,8 +67,12 @@ class _ProductoEditSheetState extends State<ProductoEditSheet> {
         if (state.status == InventarioStatus.guardado) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Producto actualizado'),
+            SnackBar(
+              content: Text(
+                state.fueCreacion
+                    ? 'Producto creado'
+                    : 'Producto actualizado',
+              ),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -105,9 +112,9 @@ class _ProductoEditSheetState extends State<ProductoEditSheet> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Editar producto',
-                style: TextStyle(
+              Text(
+                widget.esCreacion ? 'Nuevo producto' : 'Editar producto',
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
                   color: AppColors.textPrimary,
@@ -174,9 +181,11 @@ class _ProductoEditSheetState extends State<ProductoEditSheet> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text(
-                              'GUARDAR CAMBIOS',
-                              style: TextStyle(
+                          : Text(
+                              widget.esCreacion
+                                  ? 'CREAR PRODUCTO'
+                                  : 'GUARDAR CAMBIOS',
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w900,
                                 fontSize: 16,
                               ),
@@ -247,18 +256,41 @@ class _ProductoEditSheetState extends State<ProductoEditSheet> {
     final nombre = _nombreCtrl.text.trim();
     if (nombre.isEmpty) return;
 
-    context.read<InventarioCubit>().guardarProducto(
-          id: widget.producto.id,
-          nombre: nombre,
-          categoriaId: _categoriaId,
-          precioUnidadCentavos: MoneyFormatter.fromInput(_precioCtrl.text),
-          inventarioDisponible:
-              double.tryParse(_inventarioCtrl.text) ?? 0,
-          esPorPeso: _esPorPeso,
-          activo: _activo,
-          imagenUrl: _imagenCtrl.text.trim().isEmpty
-              ? null
-              : _imagenCtrl.text.trim(),
-        );
+    final datos = (
+      nombre: nombre,
+      categoriaId: _categoriaId,
+      precioUnidadCentavos: MoneyFormatter.fromInput(_precioCtrl.text),
+      inventarioDisponible: double.tryParse(_inventarioCtrl.text) ?? 0,
+      esPorPeso: _esPorPeso,
+      activo: _activo,
+      imagenUrl: _imagenCtrl.text.trim().isEmpty
+          ? null
+          : _imagenCtrl.text.trim(),
+    );
+
+    final cubit = context.read<InventarioCubit>();
+
+    if (widget.esCreacion) {
+      cubit.crearProducto(
+        nombre: datos.nombre,
+        categoriaId: datos.categoriaId,
+        precioUnidadCentavos: datos.precioUnidadCentavos,
+        inventarioDisponible: datos.inventarioDisponible,
+        esPorPeso: datos.esPorPeso,
+        activo: datos.activo,
+        imagenUrl: datos.imagenUrl,
+      );
+    } else {
+      cubit.guardarProducto(
+        id: widget.producto!.id,
+        nombre: datos.nombre,
+        categoriaId: datos.categoriaId,
+        precioUnidadCentavos: datos.precioUnidadCentavos,
+        inventarioDisponible: datos.inventarioDisponible,
+        esPorPeso: datos.esPorPeso,
+        activo: datos.activo,
+        imagenUrl: datos.imagenUrl,
+      );
+    }
   }
 }

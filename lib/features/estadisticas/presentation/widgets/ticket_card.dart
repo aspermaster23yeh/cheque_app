@@ -4,6 +4,7 @@ import 'package:carnitas_cheque/shared/core/enums/tipo_orden.dart';
 import 'package:carnitas_cheque/shared/core/theme/app_theme.dart';
 import 'package:carnitas_cheque/shared/core/utils/money_formatter.dart';
 import 'package:carnitas_cheque/shared/database/models/ticket_models.dart';
+import 'package:carnitas_cheque/shared/printer/thermal_print_button.dart';
 
 class TicketCard extends StatelessWidget {
   const TicketCard({super.key, required this.ticket});
@@ -58,12 +59,18 @@ class TicketCard extends StatelessWidget {
               ),
             ),
           ),
-          trailing: Text(
-            MoneyFormatter.toDisplay(ticket.totalCentavos),
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 16,
-            ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                MoneyFormatter.toDisplay(ticket.totalCentavos),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                ),
+              ),
+              ThermalPrintButton(ticket: ticket),
+            ],
           ),
           children: [
             ...ticket.lineas.map(_linea),

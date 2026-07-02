@@ -25,6 +25,7 @@ dependencies:
 
   # Gráficas KPI
   fl_chart: ^0.70.2
+  print_bluetooth_thermal: ^1.2.1
 
 dev_dependencies:
   flutter_test:
